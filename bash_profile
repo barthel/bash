@@ -25,7 +25,8 @@ fi
 # Homebrew settings
 export HOMEBREW_CASK_OPTS="--appdir=${HOME}/Applications --fontdir=/Library/Fonts"
 
-export JAVA_HOME="$(/usr/libexec/java_home)"
+# Check or install Java
+export JAVA_HOME="$(/usr/libexec/java_home -R)"
 
 if [ -z "${GITHUB_BARTHEL}" ]; then
   pushd . || exit
@@ -80,7 +81,18 @@ alias brew_update="brew update && brew update && brew upgrade && brew cask upgra
 IDEA_CLI="/usr/local/bin/idea"
 
 if [ -x "${IDEA_CLI}" ]; then
-  function idea_issue_review () { for i in $(git issue-files-only "$@"); do if [ -f "${i}" ]; then ${IDEA_CLI} "${i}"; fi; done; }
-  function idea_commit_review () { for i in $(git show --pretty=format: --name-only  "$@" | sort |uniq | xargs file -Nn -- | grep -v ERROR | cut -d':' -f1); do if [ -f "${i}" ]; then ${IDEA_CLI} "${i}"; fi; done; }
-  function idea_open () { for i in "${@}"; do ${IDEA_CLI} "${i}"; done; }
+  function idea_issue_review () { for i in $(git issue-files-only "$@"); do if [ -f "${i}" ]; then if [[ "${i}" =~ ^.*pom\.xml ]]; then echo "Open ${i} manually."; else ${IDEA_CLI} "${i}"; fi; fi; done; }
+  function idea_commit_review () { for i in $(git show --pretty=format: --name-only  "$@" | sort |uniq | xargs file -Nn -- | grep -v ERROR | cut -d':' -f1); do if [ -f "${i}" ]; then if [[ "${i}" =~ ^.*pom\.xml ]]; then echo "Open ${i} manually."; else ${IDEA_CLI} "${i}"; fi; fi; done; }
+  function idea_open () { for i in "${@}"; do if [ -f "${i}" ]; then if [[ "${i}" =~ ^.*pom\.xml ]]; then echo "Open ${i} manually."; else ${IDEA_CLI} "${i}"; fi; fi; done; }
+fi
+
+if [ ! -z "${ECLIPSE_APP}" ]; then
+  export ECLIPSE_CLI="open -g -a ${ECLIPSE_APP} "
+  # Enhances open command with Eclipse command line arguments like Workspace:
+  # ECLIPSE_CLI_ARGS=" --args -data ${ECLIPSE_WORKSPACE} "
+  # Append these arguments behind the file:
+  # ${ECLIPSE_CLI} "${i}" ${ECLIPSE_CLI_ARGS}
+  function eclipse_issue_review () { for i in $(git issue-files-only "$@"); do if [ -f "${i}" ]; then ${ECLIPSE_CLI} "${i}"; fi; done; }
+  function eclipse_commit_review () { for i in $(git show --pretty=format: --name-only  "$@" | sort |uniq | xargs file -Nn -- | grep -v ERROR | cut -d':' -f1); do if [ -f "${i}" ]; then ${ECLIPSE_CLI} "${i}"; fi; done; }
+  function eclipse_open () { for i in "${@}"; do if [ -f "${i}" ]; then ${ECLIPSE_CLI} "${i}"; fi; done; }
 fi

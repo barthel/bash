@@ -86,7 +86,7 @@ if [ -x "${IDEA_CLI}" ]; then
   function idea_open () { for i in "${@}"; do if [ -f "${i}" ]; then if [[ "${i}" =~ ^.*pom\.xml ]]; then echo "Open ${i} manually."; else ${IDEA_CLI} "${i}"; fi; fi; done; }
 fi
 
-if [ ! -z "${ECLIPSE_APP}" ]; then
+if [ -n "${ECLIPSE_APP}" ]; then
   export ECLIPSE_CLI="open -g -a ${ECLIPSE_APP} "
   # Enhances open command with Eclipse command line arguments like Workspace:
   # ECLIPSE_CLI_ARGS=" --args -data ${ECLIPSE_WORKSPACE} "

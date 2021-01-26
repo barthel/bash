@@ -75,7 +75,7 @@ alias la='ls -al'
 alias less="LESS='-RS#3M~g' less"
 alias less_n="LESS='-RS#3NM~g' less"
 
-alias brew_update="brew update && brew update && brew upgrade && brew cask upgrade && brew cleanup"
+alias brew_update="brew update && brew update && brew upgrade && brew upgrade --cask && brew cleanup"
 
 # IntelliJ IDEA convenient CLI commands/functions
 IDEA_CLI="/usr/local/bin/idea"
@@ -96,3 +96,5 @@ if [ -n "${ECLIPSE_APP}" ]; then
   function eclipse_commit_review () { for i in $(git show --pretty=format: --name-only  "$@" | sort |uniq | xargs file -Nn -- | grep -v ERROR | cut -d':' -f1); do if [ -f "${i}" ]; then ${ECLIPSE_CLI} "${i}"; fi; done; }
   function eclipse_open () { for i in "${@}"; do if [ -f "${i}" ]; then ${ECLIPSE_CLI} "${i}"; fi; done; }
 fi
+
+function console_issue_review () { for i in $(git issue "$@" | cut -d' ' -f2 | tac); do git show "${i}"; echo; read -rsn1 -p "Press ESC key to abort" key; if [[ $key == $'\e' ]]; then echo; break; fi; done; }

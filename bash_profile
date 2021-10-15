@@ -9,7 +9,10 @@ if [[ ${PATH} != *${HOME}/bin* ]]; then
   export PATH="${HOME}/bin:${PATH}"
 fi
 
+################################################################################
+## Homebrew configuration
 # @see: https://stackoverflow.com/a/21655733/4956096
+################################################################################
 # check if homebrew is installed
 
 if [ -z "$(command -v brew)" ]; then
@@ -21,10 +24,14 @@ if brew command command-not-found-init > /dev/null; then
   eval "$(brew command-not-found-init)";
 fi
 
-
 # Homebrew settings
 export HOMEBREW_CASK_OPTS="--appdir=${HOME}/Applications --fontdir=/Library/Fonts"
 
+alias brew_update="brew update && brew update && brew upgrade && brew upgrade --cask && brew cleanup"
+
+################################################################################
+## JAVA base configuration
+################################################################################
 # Check or install Java
 export JAVA_HOME="$(/usr/libexec/java_home)"
 
@@ -53,30 +60,40 @@ if [[ ${PATH} != *${GITHUB_BARTHEL}* ]]; then
   export PATH="${GITHUB_BARTHEL}/git-utils:${GITHUB_BARTHEL}/maven-utils:${PATH}"
 fi
 
-# bash completion
+################################################################################
+## Bash configuration
+################################################################################
+# Disables the bash deprecation warning
+# @see: https://www.addictivetips.com/mac-os/hide-default-interactive-shell-is-now-zsh-in-terminal-on-macos/
+export BASH_SILENCE_DEPRECATION_WARNING=1
+
+# starship bash prompt
+# check and configure starship bash prompt
+if [ -z "$(command -v starship)" ]; then
+  echo "The starship prompt should be installed. Please go to https://starship.rs/ or install via 'brew install starship'"
+  exit 2
+else
+  if [ -f "${GITHUB_BARTHEL}/bash/starship_config.toml" ]; then
+    export STARSHIP_CONFIG="${GITHUB_BARTHEL}/bash/starship_config.toml"
+  fi
+  eval "$(starship init bash)"
+fi
 
 # brew install bash-completion
 if [ -f "$(brew --prefix)/etc/bash_completion" ]; then
-  # shellcheck source=/usr/local//etc/bash_completion
+  # shellcheck source=/usr/local/etc/bash_completion
   . "$(brew --prefix)/etc/bash_completion"
 fi
 
-# git prompt
-if [ -f "$(brew --prefix bash-git-prompt)/share/gitprompt.sh" ]; then
-  __GIT_PROMPT_DIR="$(brew --prefix bash-git-prompt)/share"
-  # shellcheck source=/usr/local/opt/bash-git-prompt/share/gitprompt.sh
-  . "$(brew --prefix bash-git-prompt)/share/gitprompt.sh"
-fi
-
-
+################################################################################
 # aliases
 alias ll='ls -l'
 alias la='ls -al'
 alias less="LESS='-RS#3M~g' less"
 alias less_n="LESS='-RS#3NM~g' less"
 
-alias brew_update="brew update && brew update && brew upgrade && brew upgrade --cask && brew cleanup"
 
+################################################################################
 # IntelliJ IDEA convenient CLI commands/functions
 IDEA_CLI="/usr/local/bin/idea"
 

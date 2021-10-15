@@ -1,0 +1,271 @@
+# Inserts a blank line between shell prompts
+add_newline = true
+
+format = """
+$directory\
+$git_branch\
+$git_commit\
+$git_state\
+$git_metrics\
+$git_status\
+$package\
+$fill\
+$aws\
+$gcloud\
+$openstack\
+$kubernetes\
+$fill\
+$username\
+$hostname\
+$shlvl\
+$memory_usage\
+$time\
+$battery
+$status\
+$character
+"""
+
+[aws]
+disabled = true
+format = '[$symbol($profile )(\($region\) )]($style)'
+style = "bold blue"
+symbol = "AWS "
+
+[battery]
+disabled = false
+format = "[$symbol]($style) "
+full_symbol = ""
+charging_symbol = ""
+discharging_symbol = ""
+unknown_symbol = ""
+empty_symbol = ""
+
+[[battery.display]]
+threshold = 100
+charging_symbol = ""
+discharging_symbol = ""
+style = "dimmed green"
+
+[[battery.display]]
+threshold = 80
+charging_symbol = ""
+discharging_symbol = ""
+style = "dimmed green"
+
+[[battery.display]]
+threshold = 60
+charging_symbol = ""
+discharging_symbol = ""
+style = "dimmed yellow"
+
+[[battery.display]]
+threshold = 40
+charging_symbol = ""
+discharging_symbol = ""
+style = "dimmed yellow"
+
+[[battery.display]]
+threshold = 20
+charging_symbol = ""
+discharging_symbol = ""
+style = "dimmed red"
+
+[[battery.display]]
+threshold = 10
+charging_symbol = ""
+discharging_symbol = ""
+style = "red"
+
+[character]
+format = '[$symbol ❯](green) '
+success_symbol = "[✓](bold green)"
+error_symbol = "" # rendered by status module
+
+[cmd_duration]
+disabled = true
+
+[directory]
+style = "cyan"
+format = "[$read_only]($read_only_style)[$path]($style) "
+truncation_length = 0
+truncate_to_repo = false
+truncation_symbol = ".../"
+home_symbol = " ~"
+read_only = "[] "
+
+[fill]
+symbol = " "
+style = ""
+
+[gcloud]
+symbol = "️GC "
+
+[git_branch]
+style = "purple"
+format = '[\[](green)[${symbol}${branch}]($style)'
+symbol = " "
+
+[git_commit]
+style = "purple"
+format = '[:$hash$tag]($style)'
+tag_symbol = ""
+
+[git_state]
+style = "yellow"
+format = ' [\($state( $progress_current of $progress_total)\)]($style) '
+
+[git_metrics]
+disabled = true
+
+[git_status]
+style = "purple"
+format = '[ ${ahead_behind}](${green})([|](green)[${all_status}](${style}))[\]](green) '
+ahead = "↑·${count}"
+behind = "↓·${count}"
+diverged = "↑·${ahead_count} ↓·${behind_count}"
+up_to_date = '[✓](green)'
+modified = '[✚ ${count}](blue)'
+staged = '[● ${count}](yellow)'
+stashed = '[⚑ ${count}](purple)'
+untracked = '[…${count}](cyan)'
+conflicted = '[⚡ ${count}](bold red)'
+deleted = '[✖ ${count}](red)'
+
+[helm]
+disabled = true
+
+[hostname]
+ssh_only = false
+style = "bold dimmed green"
+format =  "[$hostname](${style})"
+disabled = false
+
+[hg_branch]
+disabled = true
+
+[java]
+disabled = true
+
+[jobs]
+disabled = true
+
+[julia]
+disabled = true
+
+[kotlin]
+disabled = true
+
+[kubernetes]
+disabled = true
+
+[line_break]
+disabled = false
+
+[lua]
+disabled = true
+
+[memory_usage]
+disabled = true
+threshold = -1
+
+[nim]
+disabled = true
+
+[nix_shell]
+disabled = true
+
+[nodejs]
+disabled = true
+
+[ocaml]
+disabled = true
+
+[openstack]
+disabled = true
+
+[package]
+disabled = false
+format = '[$symbol$version]($style) '
+symbol = ""
+version_format = '${raw}'
+display_private = true
+
+[perl]
+disabled = true
+
+[php]
+disabled = true
+
+[purescript]
+disabled = true
+
+[python]
+disabled = true
+
+[rlang]
+disabled = true
+
+[red]
+disabled = true
+
+[ruby]
+disabled = true
+
+[rust]
+disabled = true
+
+[scala]
+disabled = true
+
+[shell]
+disabled = true
+
+[shlvl]
+disabled = false
+format = "[$symbol$shlvl]($style) "
+symbol = "⮃ "
+threshold = 2
+
+[singularity]
+disabled = true
+
+[status]
+disabled = false
+style = "bold dimmed red"
+symbol = '[✗](bold red)'
+format = '[$symbol \[$status$signal_number$maybe_int\]]($style)'
+map_symbol = false
+pipestatus = true
+
+[swift]
+disabled = true
+
+[terraform]
+disabled = true
+
+[time]
+style = "yellow"
+disabled = false
+format = ' [$time]($style) '
+use_12hr = false
+time_format = "%T" # "%a. %d. %b %Y %T%Z"
+utc_time_offset = "local"
+
+[username]
+style_user = "bold dimmed green"
+style_root = "bold bright green"
+format = "[${user}@]($style)"
+disabled = false
+show_always = true
+
+[vagrant]
+disabled = true
+
+[vlang]
+disabled = true
+
+[vcsh]
+disabled = true
+
+[zig]
+disabled = true

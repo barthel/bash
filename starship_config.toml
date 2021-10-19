@@ -39,45 +39,45 @@ symbol = "AWS "
 disabled = false
 format = "[$symbol]($style) "
 full_symbol = ""
-charging_symbol = ""
-discharging_symbol = ""
+charging_symbol = ""
+discharging_symbol = ""
 unknown_symbol = ""
 empty_symbol = ""
 
 [[battery.display]]
-threshold = 99
+threshold = 100
 charging_symbol = "" # ""
-discharging_symbol = ""
+discharging_symbol = ""
 style = "dimmed green"
 
 [[battery.display]]
 threshold = 80
 charging_symbol = "" # ""
-discharging_symbol = ""
+discharging_symbol = ""
 style = "dimmed green"
 
 [[battery.display]]
 threshold = 60
 charging_symbol = "" # ""
-discharging_symbol = ""
+discharging_symbol = ""
 style = "dimmed yellow"
 
 [[battery.display]]
 threshold = 40
 charging_symbol = "" #""
-discharging_symbol = ""
+discharging_symbol = ""
 style = "dimmed yellow"
 
 [[battery.display]]
 threshold = 20
 charging_symbol = "" # ""
-discharging_symbol = ""
+discharging_symbol = ""
 style = "dimmed red"
 
 [[battery.display]]
 threshold = 10
 charging_symbol = "" # ""
-discharging_symbol = ""
+discharging_symbol = ""
 style = "red"
 
 [character]

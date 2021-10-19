@@ -1,3 +1,5 @@
+# Icons: https://www.nerdfonts.com/cheat-sheet
+#
 # Inserts a blank line between shell prompts
 add_newline = true
 
@@ -41,38 +43,38 @@ unknown_symbol = ""
 empty_symbol = ""
 
 [[battery.display]]
-threshold = 100
-charging_symbol = ""
+threshold = 99
+charging_symbol = "" # ""
 discharging_symbol = ""
 style = "dimmed green"
 
 [[battery.display]]
 threshold = 80
-charging_symbol = ""
+charging_symbol = "" # ""
 discharging_symbol = ""
 style = "dimmed green"
 
 [[battery.display]]
 threshold = 60
-charging_symbol = ""
+charging_symbol = "" # ""
 discharging_symbol = ""
 style = "dimmed yellow"
 
 [[battery.display]]
 threshold = 40
-charging_symbol = ""
+charging_symbol = "" #""
 discharging_symbol = ""
 style = "dimmed yellow"
 
 [[battery.display]]
 threshold = 20
-charging_symbol = ""
+charging_symbol = "" # ""
 discharging_symbol = ""
 style = "dimmed red"
 
 [[battery.display]]
 threshold = 10
-charging_symbol = ""
+charging_symbol = "" # ""
 discharging_symbol = ""
 style = "red"
 
@@ -248,7 +250,7 @@ style = "yellow"
 disabled = false
 format = ' [$time]($style) '
 use_12hr = false
-time_format = "%T" # "%a. %d. %b %Y %T%Z"
+time_format = "%T%Z" # "%a. %d. %b %Y %T%Z"
 utc_time_offset = "local"
 
 [username]

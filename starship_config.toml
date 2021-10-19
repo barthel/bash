@@ -293,16 +293,23 @@ style = "bold blue"
 
 [custom.kubernetes]
 command = """
-    if [ -n ${AWS_SESSION_EXPIRATION} ]
+    config=${KUBECONFIG:-"${HOME}/.kube/config"}
+    context="$(cat ${config} | grep "current-context:" | cut -d: -f2- | tr -d ' ')"
+    if [[ ${context} =~ ^arn:aws.* ]]
     then
-        if [ $(date -j -f %FT%H%M%S%z ${AWS_SESSION_EXPIRATION//:} +%s) -gt $(date -u +%s) ]
+        if [ -n ${AWS_SESSION_EXPIRATION} ]
         then
-            config=${KUBECONFIG:-"${HOME}/.kube/config"}
-            if [ -f ${config} ]
+            if [ $(date -j -f %FT%H%M%S%z ${AWS_SESSION_EXPIRATION//:} +%s) -gt $(date -u +%s) ]
             then
-                echo "k8s: $(cat ${config} | grep "current-context:" | cut -d: -f2- | tr -d ' ')"
+                
+                if [ -f ${config} ]
+                then
+                    echo "k8s: ${context}"
+                fi
             fi
         fi
+    else
+        echo "k8s: ${context}"
     fi
 """
 when = "[[ -n ${AWS_SESSION_TOKEN} ]]"

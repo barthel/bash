@@ -12,9 +12,11 @@ $git_metrics\
 $git_status\
 $package\
 $fill\
+${custom.aws}\
 $aws\
 $gcloud\
 $openstack\
+${custom.kubernetes}\
 $kubernetes\
 $fill\
 $username\
@@ -271,3 +273,38 @@ disabled = true
 
 [zig]
 disabled = true
+
+[custom.aws]
+command = """
+    if [ -n ${AWS_SESSION_EXPIRATION} ]
+    then
+        declare -i time_diff=$(date -j -f %FT%H%M%S%z ${AWS_SESSION_EXPIRATION//:} +%s)-$(date -u +%s)
+        if [ ${time_diff} -gt 0 ]
+        then
+            echo "${AWS_SESSION_PROFILE} ($(date -j -u -f %s ${time_diff} +%T))"
+        else
+            echo '' 
+        fi
+    fi
+"""
+when = "[[ -n ${AWS_SESSION_TOKEN} ]]"
+format = '[AWS: ${output}]($style) '
+style = "bold blue"
+
+[custom.kubernetes]
+command = """
+    if [ -n ${AWS_SESSION_EXPIRATION} ]
+    then
+        if [ $(date -j -f %FT%H%M%S%z ${AWS_SESSION_EXPIRATION//:} +%s) -gt $(date -u +%s) ]
+        then
+            config=${KUBECONFIG:-"${HOME}/.kube/config"}
+            if [ -f ${config} ]
+            then
+                echo "k8s: $(cat ${config} | grep "current-context:" | cut -d: -f2- | tr -d ' ')"
+            fi
+        fi
+    fi
+"""
+when = "[[ -n ${AWS_SESSION_TOKEN} ]]"
+format = '[${output}]($style) '
+style = "bold cyan"

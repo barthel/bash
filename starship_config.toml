@@ -297,7 +297,10 @@ style = "bold blue"
 command = """
     config=${KUBECONFIG:-"${HOME}/.kube/config"}
     context="$(cat ${config} | grep "current-context:" | cut -d: -f2- | tr -d ' ')"
-    if [[ ${context} =~ ^arn:aws.* ]]
+    if [ -z ${context} ]
+    then
+        echo "k8s: "
+    elif [[ ${context} =~ ^arn:aws.* ]]
     then
         if [ -n ${AWS_SESSION_EXPIRATION} ]
         then

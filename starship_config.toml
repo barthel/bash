@@ -98,6 +98,7 @@ truncation_symbol = ".../"
 home_symbol = "⏏︎ ~"
 read_only_style = "bold red"
 read_only = " "
+[directory.substitutions]
 
 [fill]
 symbol = "⋅"
@@ -309,7 +310,8 @@ command = """
                 
                 if [ -f ${config} ]
                 then
-                    echo "k8s: ${context} "
+                    # cut the arn and return only 'cluster/foobar'
+                    echo "k8s: ${context##*:} "
                 fi
             fi
         fi

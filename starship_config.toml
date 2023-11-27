@@ -5,6 +5,7 @@
 add_newline = true
 
 format = """
+$battery\
 $directory\
 $git_branch\
 $git_commit\
@@ -39,46 +40,46 @@ symbol = "AWS "
 [battery]
 disabled = false
 format = "[$symbol]($style) "
-full_symbol = ""
-charging_symbol = ""
-discharging_symbol = ""
-unknown_symbol = ""
-empty_symbol = ""
+full_symbol = "󰁹" # "󰁹" nf-md-battery
+charging_symbol = "󰁹"
+discharging_symbol = "󰁹"
+unknown_symbol = "󰂑"
+empty_symbol = "󰂎"
 
 [[battery.display]]
 threshold = 100
-charging_symbol = "" # ""
-discharging_symbol = ""
+charging_symbol = "󰁹" # "󰁹" nf-md-battery
+discharging_symbol = "󰁹"
 style = "dimmed green"
 
 [[battery.display]]
 threshold = 80
-charging_symbol = "" # ""
-discharging_symbol = ""
+charging_symbol = "󰂁" # "󰂁" nf-md-battery_80
+discharging_symbol = "󰂁"
 style = "dimmed green"
 
 [[battery.display]]
 threshold = 60
-charging_symbol = "" # ""
-discharging_symbol = ""
+charging_symbol = "󰁿" # "󰁿" nf-md-battery_60
+discharging_symbol = "󰁿"
 style = "dimmed yellow"
 
 [[battery.display]]
 threshold = 40
-charging_symbol = "" #""
-discharging_symbol = ""
+charging_symbol = "󰁽" # "󰁽" nf-md-battery_40
+discharging_symbol = "󰁽"
 style = "dimmed yellow"
 
 [[battery.display]]
 threshold = 20
-charging_symbol = "" # ""
-discharging_symbol = ""
+charging_symbol = "󰁻" # "󰁻" nf-md-battery_20
+discharging_symbol = "󰁻"
 style = "dimmed red"
 
 [[battery.display]]
 threshold = 10
-charging_symbol = "" # ""
-discharging_symbol = ""
+charging_symbol = "󰁺" # "󰁺" nf-md-battery_outline
+discharging_symbol = "󰁺"
 style = "red"
 
 [character]
@@ -91,13 +92,13 @@ disabled = true
 
 [directory]
 style = "cyan"
-format = "[ ]($style)[$read_only]($read_only_style)[$path]($style) "
+format = "[ ]($style)[$read_only]($read_only_style)[$path]($style) " # "" nf-fa-folder
 truncation_length = 0
 truncate_to_repo = false
 truncation_symbol = ".../"
-home_symbol = "⏏︎ ~"
+home_symbol = " ~" # "" nf-oct-home_fill
 read_only_style = "bold red"
-read_only = " "
+read_only = " " # "" nf-fa-lock
 [directory.substitutions]
 
 [fill]
@@ -110,12 +111,12 @@ symbol = "️GC "
 [git_branch]
 style = "purple"
 format = '[\[](green)[${symbol}${branch}]($style)'
-symbol = " "
+symbol = " " # "" nf-dev-git_branch
 
 [git_commit]
 style = "purple"
 format = '[:$hash$tag]($style)'
-tag_symbol = ""
+tag_symbol = "󰓹" # "󰓹" nf-md-tag
 
 [git_state]
 style = "yellow"
@@ -127,16 +128,16 @@ disabled = true
 [git_status]
 style = "purple"
 format = '[ ${ahead_behind}](${green})([|](green)[${all_status}](${style}))[\]](green) '
-ahead = "↑·${count}"
-behind = "↓·${count}"
-diverged = "↑·${ahead_count} ↓·${behind_count}"
-up_to_date = '[✓](green)'
-modified = '[✚ ${count}](blue)'
-staged = '[● ${count}](yellow)'
-stashed = '[⚑ ${count}](purple)'
-untracked = '[…${count}](cyan)'
-conflicted = '[⚡ ${count}](bold red)'
-deleted = '[✖ ${count}](red)'
+ahead = "·${count}" # "" nf-cod-arrow_up
+behind = "·${count}" # "" nf-cod-arrow_down
+diverged = "·${ahead_count} ·${behind_count}" # "" nf-cod-arrow_up, "" nf-cod-arrow_down
+up_to_date = '[](green)' # "" nf-fa-check
+modified = '[ ${count}](blue)' # "" nf-fa-plus
+staged = '[ ${count}](yellow)' # "" nf-fa-circle
+stashed = '[󰈻 ${count}](purple)' # "󰈻" nf-md-flag
+untracked = '[${count}](cyan)' # "" nf-cod-ellipsis
+conflicted = '[⚡ ${count}](bold red)' # "⚡" nf-oct-zap
+deleted = '[ ${count}](red)' # "" nf-fa-remove
 
 [helm]
 disabled = true
@@ -230,7 +231,7 @@ disabled = true
 [shlvl]
 disabled = false
 format = "[$symbol$shlvl]($style) "
-symbol = "⮃ "
+symbol = "󰹹 " # "󰹹" nf-md-arrow_up_down
 threshold = 2
 
 [singularity]
@@ -239,7 +240,7 @@ disabled = true
 [status]
 disabled = false
 style = "bold dimmed red"
-symbol = '[✗](bold red)'
+symbol = '[](bold red)' # "" nf-fa-remove
 format = '[$symbol \[$status$signal_number$maybe_int\]]($style)'
 map_symbol = false
 pipestatus = true
@@ -281,12 +282,22 @@ disabled = true
 command = """
     if [ -n ${AWS_SESSION_EXPIRATION} ]
     then
-        declare -i time_diff=$(date -j -f %FT%H%M%S%z ${AWS_SESSION_EXPIRATION//:} +%s)-$(date -u +%s)
+#        declare -i time_diff=$(date -j -f %FT%H%M%S%z ${AWS_SESSION_EXPIRATION//:} +%s)-$(date -u +%s)
+        _date_format="%FT%H%M%S" # without colons ':'
+        _normalized_expiration="${AWS_SESSION_EXPIRATION//:}" # remove all colons ':'
+        if [[ ${_normalized_expiration} =~ ^.*[-+]+[0-9]+ ]]
+        then
+            _date_format+="%z"
+        elif [[ ${_normalized_expiration} =~ ^.*Z ]]
+        then
+            _date_format+="Z"
+        fi
+        declare -i time_diff=$(date -j -f ${_date_format} ${_normalized_expiration} +%s)-$(date -u +%s)
         if [ ${time_diff} -gt 0 ]
         then
             echo "${AWS_SESSION_PROFILE} ($(date -j -u -f %s ${time_diff} +%T))"
         else
-            echo '' 
+            echo '' # "" nf-fa-remove
         fi
     fi
 """
@@ -300,7 +311,7 @@ command = """
     context="$(cat ${config} | grep "current-context:" | cut -d: -f2- | tr -d ' ')"
     if [ -z ${context} ]
     then
-        echo "k8s: "
+        echo "k8s: " # "" nf-fa-remove
     elif [[ ${context} =~ ^arn:aws.* ]]
     then
         if [ -n ${AWS_SESSION_EXPIRATION} ]

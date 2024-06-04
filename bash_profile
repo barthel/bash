@@ -24,7 +24,10 @@ if brew command command-not-found-init > /dev/null; then
   eval "$(brew command-not-found-init)";
 fi
 
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
 # Homebrew settings
+export HOMEBREW_NO_ANALYTICS=1
 export HOMEBREW_CASK_OPTS="--appdir=${HOME}/Applications --fontdir=/Library/Fonts"
 
 alias brew_update="brew update && brew update && brew upgrade && brew upgrade --cask && brew cleanup"

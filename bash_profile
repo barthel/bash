@@ -24,7 +24,7 @@ if brew command command-not-found-init > /dev/null; then
   eval "$(brew command-not-found-init)";
 fi
 
-eval "$(/opt/homebrew/bin/brew shellenv)"
+eval "$($(command -v brew) shellenv)"
 
 # Homebrew settings
 export HOMEBREW_NO_ANALYTICS=1

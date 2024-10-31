@@ -32,6 +32,8 @@ export HOMEBREW_CASK_OPTS="--appdir=${HOME}/Applications --fontdir=/Library/Font
 
 alias brew_update="brew update && brew update && brew upgrade && brew upgrade --cask && brew cleanup"
 
+HOMEBREW_NO_ENV_HINTS=true
+
 ################################################################################
 ## JAVA base configuration
 ################################################################################

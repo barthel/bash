@@ -15,16 +15,22 @@ fi
 ################################################################################
 # check if homebrew is installed
 
-if [ -z "$(command -v brew)" ]; then
+if [ -x /opt/homebrew/bin/brew ]; then
+  BREW_BIN="/opt/homebrew/bin/brew"
+elif [ -x /usr/local/bin/brew ]; then
+  BREW_BIN="/usr/local/bin/brew"
+elif [ -n "$(command -v brew)" ]; then
+  BREW_BIN="$(command -v brew)"
+else
   echo "Homebrew should be installed. Please go to https://https://brew.sh and install Homebrew."
   exit 1
 fi
-# brew command-not-found
-if brew command command-not-found-init > /dev/null; then
-  eval "$(brew command-not-found-init)";
-fi
+eval "$("${BREW_BIN}" shellenv)"
 
-eval "$($(command -v brew) shellenv)"
+# brew command-not-found
+if "${BREW_BIN}" command command-not-found-init > /dev/null; then
+  eval "$("${BREW_BIN}" command-not-found-init)";
+fi
 
 # Homebrew settings
 export HOMEBREW_NO_ANALYTICS=1
@@ -85,10 +91,9 @@ else
 fi
 
 # brew install bash-completion
-if [ -f "$(brew --prefix)/etc/bash_completion" ]; then
-  # shellcheck source=/usr/local/etc/bash_completion
-  . "$(brew --prefix)/etc/bash_completion"
-fi
+# shellcheck source=/opt/homebrew/etc/bash_completion
+[[ -r "$(brew --prefix)/etc/profile.d/bash_completion.sh" ]] && . "$(brew --prefix)/etc/profile.d/bash_completion.sh"
+[[ -r "$(brew --prefix)/etc/profile.d/bash_completion" ]] && . "$(brew --prefix)/etc/profile.d/bash_completion"
 
 ################################################################################
 # aliases
@@ -120,3 +125,10 @@ if [ -n "${ECLIPSE_APP}" ]; then
 fi
 
 function console_issue_review () { for i in $(git issue "$@" | cut -d' ' -f2 | tac); do git show "${i}"; echo; read -rsn1 -p "Press ESC key to abort" key; if [[ $key == $'\e' ]]; then echo; break; fi; done; }
+
+################################################################################
+# Mistral Vibe CLI wrapper (tmux-Split)
+################################################################################
+function vibe () {
+  "${ITERATEC_UBARTHEL}/ai-cli/vibe/bin/vibe-wrapper" "$@"
+}

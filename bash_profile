@@ -127,7 +127,7 @@ fi
 function console_issue_review () { for i in $(git issue "$@" | cut -d' ' -f2 | tac); do git show "${i}"; echo; read -rsn1 -p "Press ESC key to abort" key; if [[ $key == $'\e' ]]; then echo; break; fi; done; }
 
 ################################################################################
-# Mistral Vibe CLI wrapper (tmux-Split)
+# Mistral Vibe CLI wrapper (tmux-Statuszeile)
 ################################################################################
 function vibe () {
   "${ITERATEC_UBARTHEL}/ai-cli/vibe/bin/vibe-wrapper" "$@"

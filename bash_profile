@@ -15,30 +15,29 @@ fi
 ################################################################################
 # check if homebrew is installed
 
+# Homebrew ist optional. Pfade direkt prüfen, da `command -v brew` in einer kalten Shell
+# (frisches Terminal-Fenster) scheitern kann, bevor `brew shellenv` den PATH ergänzt.
+BREW_BIN=""
 if [ -x /opt/homebrew/bin/brew ]; then
   BREW_BIN="/opt/homebrew/bin/brew"
 elif [ -x /usr/local/bin/brew ]; then
   BREW_BIN="/usr/local/bin/brew"
-elif [ -n "$(command -v brew)" ]; then
+elif command -v brew &>/dev/null; then
   BREW_BIN="$(command -v brew)"
-else
-  echo "Homebrew should be installed. Please go to https://https://brew.sh and install Homebrew."
-  exit 1
-fi
-eval "$("${BREW_BIN}" shellenv)"
-
-# brew command-not-found
-if "${BREW_BIN}" command command-not-found-init > /dev/null; then
-  eval "$("${BREW_BIN}" command-not-found-init)";
 fi
 
-# Homebrew settings
-export HOMEBREW_NO_ANALYTICS=1
-export HOMEBREW_CASK_OPTS="--appdir=${HOME}/Applications --fontdir=/Library/Fonts"
-
-alias brew_update="brew update && brew update && brew upgrade && brew upgrade --cask && brew cleanup"
-
-HOMEBREW_NO_ENV_HINTS=true
+if [ -n "${BREW_BIN}" ]; then
+  eval "$("${BREW_BIN}" shellenv)"
+  # brew command-not-found
+  if "${BREW_BIN}" command command-not-found-init > /dev/null 2>&1; then
+    eval "$("${BREW_BIN}" command-not-found-init)";
+  fi
+  # Homebrew settings
+  export HOMEBREW_NO_ANALYTICS=1
+  export HOMEBREW_CASK_OPTS="--appdir=${HOME}/Applications --fontdir=/Library/Fonts"
+  alias brew_update="brew update && brew update && brew upgrade && brew upgrade --cask && brew cleanup"
+  HOMEBREW_NO_ENV_HINTS=true
+fi
 
 ################################################################################
 ## JAVA base configuration
@@ -47,23 +46,23 @@ HOMEBREW_NO_ENV_HINTS=true
 export JAVA_HOME="$(/usr/libexec/java_home)"
 
 if [ -z "${GITHUB_BARTHEL}" ]; then
-  pushd . || exit
-  SCRIPT_PATH="$(dirname "${BASH_SOURCE[0]}")"
+  _OLDPWD="$(pwd)"
+  SCRIPT_PATH="$(dirname "${BASH_SOURCE[0]:-$0}")"
   # symbolic link check
   if [ -h "${SCRIPT_PATH}" ]; then
-    while [ -h "${SCRIPT_PATH}" ];
-    do
+    while [ -h "${SCRIPT_PATH}" ]; do
       cd "$(dirname "$SCRIPT_PATH")" || return
       SCRIPT_PATH=$(readlink "${SCRIPT_PATH}")
     done
   fi
-  cd "$(dirname "${SCRIPT_PATH}")/.." || exit
+  cd "$(dirname "${SCRIPT_PATH}")/.." || return
   # export private github.com (https://github.com/barthel) repository path
-  export GITHUB_BARTHEL=$(pwd);
+  export GITHUB_BARTHEL=$(pwd)
   # export github.com repository base path
   # @see: http://wiki.bash-hackers.org/syntax/pe
   export GITHUB_BASE="${GITHUB_BARTHEL%%/barthel}"
-  popd || exit
+  cd "${_OLDPWD}" || return
+  unset _OLDPWD SCRIPT_PATH
 fi
 
 # Adds defined repositories located in GITHUB_BARTHEL to PATH
@@ -81,8 +80,7 @@ export BASH_SILENCE_DEPRECATION_WARNING=1
 # starship bash prompt
 # check and configure starship bash prompt
 if [ -z "$(command -v starship)" ]; then
-  echo "The starship prompt should be installed. Please go to https://starship.rs/ or install via 'brew install starship'"
-  exit 2
+  echo "Warning: starship not found -- install via 'port install starship'."
 else
   if [ -f "${GITHUB_BARTHEL}/bash/starship_config.toml" ]; then
     export STARSHIP_CONFIG="${GITHUB_BARTHEL}/bash/starship_config.toml"
@@ -91,9 +89,13 @@ else
 fi
 
 # brew install bash-completion
-# shellcheck source=/opt/homebrew/etc/bash_completion
-[[ -r "$(brew --prefix)/etc/profile.d/bash_completion.sh" ]] && . "$(brew --prefix)/etc/profile.d/bash_completion.sh"
-[[ -r "$(brew --prefix)/etc/profile.d/bash_completion" ]] && . "$(brew --prefix)/etc/profile.d/bash_completion"
+if [ -n "${BREW_BIN}" ]; then
+  _brew_prefix="$("${BREW_BIN}" --prefix)"
+  # shellcheck source=/opt/homebrew/etc/bash_completion
+  [[ -r "${_brew_prefix}/etc/profile.d/bash_completion.sh" ]] && . "${_brew_prefix}/etc/profile.d/bash_completion.sh"
+  [[ -r "${_brew_prefix}/etc/profile.d/bash_completion" ]] && . "${_brew_prefix}/etc/profile.d/bash_completion"
+  unset _brew_prefix
+fi
 
 ################################################################################
 # aliases
